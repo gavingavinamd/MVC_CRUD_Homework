@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "ShowOrderDetail";
+    
+}
+<style>
+    tr{
+        border:1px solid black; 
+        
+    }
+    tr:nth-child(2n){
+        background-color:yellowgreen;
+    }
+    td{
+        border:1px solid black;
+        text-align : center;
+        padding:5px;
+    }
+</style>
+<h1>ShowOrderDetail</h1>
+
+<div>
+    <table>
+         <tr>
+            <td>訂單ID</td>
+            <td>食物名稱</td>
+            <td>顧客ID</td>
+            <td>顧客名稱</td>
+            <td>訂單時間</td>
+            <td>付款時間</td>
+        </tr>
+    @foreach(var item in Model)
+    {       
+        <tr>
+            <td>@item.OrderId </td>
+            <td>@item.FoodName</td>
+            <td>@item.CustomerId</td>
+            <td>@item.CustomerName</td>
+            <td>@item.OrderDateTime</td>
+            <td>@item.PaidDateTime</td>
+        </tr>
+    }
+    </table>
+</div>
+
