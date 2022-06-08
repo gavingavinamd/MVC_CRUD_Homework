@@ -278,5 +278,73 @@ namespace prjMvcHomeworkEF.Controllers
         {
           return (_context.TblFoodOrders?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+
+        //3.1 [HttpGet]  取得搜尋頁面（空搜尋表單 + 空搜尋結果)
+        public IActionResult Search()
+        {
+            ViewData["Message"] = "食物搜尋 GET => 取得表單";
+            return View(new ViewModel()); //new => 避免null reference 發生
+        }
+
+        //3.2 [HttpPost]  接收搜尋條件，從自料庫做搜尋，然後把搜尋條件與搜尋結果放回 ViewModel，跟 View 打包一起後顯示
+        [HttpPost]
+        public IActionResult Search(FoodSearchParams searchParams)
+        {
+            var viewModel = new ViewModel();
+            var result = _context.TblFood02s.ToList();
+            var searchResult = _context.TblFood02s.ToList();
+           
+
+            if (searchParams.commentStar != null)
+            {
+                result = _context.TblFood02s.Where(x => x.Stars == searchParams.commentStar).ToList();
+                viewModel.Foods = result.ToList();
+            }
+            else if (searchParams.commentStar == null)
+            {
+                if (searchParams.minPrice == null && searchParams.maxPrice == null)
+                {
+                    ViewData["Message"] = "請輸入搜尋值";
+                }
+                else if (searchParams.minPrice == null)
+                {
+                    searchParams.minPrice = 0;
+                }
+                else if (searchParams.maxPrice == null)
+                {
+                    searchParams.maxPrice = 9999999;
+                }
+                searchResult = _context.TblFood02s.Where(x => x.Price >= searchParams.minPrice && x.Price <= searchParams.maxPrice).ToList();
+                viewModel.SearchParams = searchParams;
+                viewModel.Foods = searchResult.ToList();
+            }
+                                                                                                                                        
+            if (searchParams.maxPrice != null && searchParams.minPrice != null)
+            {
+                ViewData["Message"] = $"找到{viewModel.Foods.Count}個評價";
+            }
+
+
+            viewModel.SaveFoods = _context.TblFoodOrders.OrderByDescending(x => x.OrderDateTime).Take(3).ToList();
+
+
+            return View(viewModel);
+        }
+
+        public IActionResult GetDummySelectList()
+        {           
+            
+            return Json(new List<TblFood02>()
+            {
+                new TblFood02() { Name = "中餐", Style = "中餐" },
+                new TblFood02() { Name = "西餐", Style = "西餐" },
+                new TblFood02() { Name = "印度", Style = "印度" },
+                new TblFood02() { Name = "日式", Style = "日式" },
+                new TblFood02() { Name = "美式", Style = "美式" }
+            });
+        }
+
+        // http://localhost:5012/TblFoodOrders/Search
     }
 }

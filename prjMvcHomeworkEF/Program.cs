@@ -26,6 +26,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=TblFoodOrders}/{action=Index}/{id?}");
+    pattern: "{controller=TblFoodOrders}/{action=Search}/{id?}");
 
 app.Run();

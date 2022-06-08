@@ -1,0 +1,162 @@
+﻿@model prjMvcHomeworkEF.Models.ViewModel
+
+
+
+<script>
+
+    function buttonClick(){
+
+        var url = window.location.href + "TblFoodOrders/ShowOrderDetail"
+        window.location.href = url
+    }
+
+</script>
+<h2>搜尋</h2>
+<h3>食物搜尋</h3>
+<hr>
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Search">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @*asp-for 用來在頁面指定表單的 input 要跟 Model 的哪個屬性綁定*@
+                @*<label asp-for="SearchParams.minPrice" class="control-label"></label>   *@            @*文字欄位*@
+                <label class="control-label">最小價格</label>
+                <input asp-for="SearchParams.minPrice" class="form-control" />                      @*輸入欄位*@
+                <span asp-validation-for="SearchParams.minPrice" class="text-danger" value=""></span>       @*驗證欄位*@
+            </div>
+            <div class="form-group">
+                @*<label asp-for="SearchParams.maxPrice" class="control-label"></label>*@
+                <label class="control-label">最大價格</label>
+                <input asp-for="SearchParams.maxPrice" class="form-control" />
+                <span asp-validation-for="SearchParams.maxPrice" class="text-danger" value=""></span>
+            </div>
+            <div class="form-group">
+
+                <label class="control-label">星星評價</label>
+                <input asp-for="SearchParams.commentStar" class="form-control" />
+                <span asp-validation-for="SearchParams.maxPrice" class="text-danger" value=""></span>
+             </div>
+
+             <div class="form-group"> 
+                <label>食物風格</label> 
+                <br>
+                <select id="select-1" style=margin-top:5px;margin-bottom:10px >
+                <option>Loding</option>
+                </select>
+                
+             </div>
+            <div class="form-group">
+                <input type="submit" value="搜尋送出" class="btn btn-primary" />
+                <button type="button" onclick="buttonClick()" class="btn btn-primary">回到訂單頁面</button>
+            </div>
+           
+
+            
+
+                @*<label class="control-label">最近被賣出的三個食物</label>*@
+              
+            
+        </form>
+    </div>
+</div>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Foods[0].Name) *@
+                食物名字
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Foods[0].Stars) *@
+                食物評價
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Foods[0].Price) *@
+                食物價格
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Foods)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stars)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </td>
+
+                    </tr>
+                }
+      
+    </tbody>
+</table>
+<h3>@ViewData["Message"]</h3>
+<hr>
+<h4>最近被賣出的3個食物</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>              
+                食物ID
+            </th>     
+            <th>              
+                顧客ID
+            </th>  
+        </tr>
+    </thead>
+    <tbody>       
+        @foreach (var item in Model.SaveFoods)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Foodld)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerId)
+                </td>              
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+          $(document).ready(function () {            
+            $.ajax({ // callback 回乎函數
+                url: '/TblFoodOrders/GetDummySelectList',
+                method: 'GET', // jQuery 1.9 版以前只能用 type: 'GET'，1.9以後兩個都可以
+                success: function (resp) {
+                    if (resp && resp.length > 0) {
+                             selectElement = $("#select-1");
+                        selectElement.empty(); // 清空 select options (loading)
+                        for (let i = 0; i < resp.length; i++) {
+                            selectElement.append(
+                                new Option(
+                                    resp[i].name, resp[i].style)
+                            );
+                        }
+                    }
+                }
+            }).then(function () { //然後
+                $("#select-1").on('change', function () { //on 後來生成
+                    // $(this) 代表叫 jQuery 幫我們取 "觸發這個 event" 的元素
+                    // 也就是被選中的 option
+                    alert($(this).val()); 
+                });
+            });
+        });   
+    </script>
+}
+
+
+
+
